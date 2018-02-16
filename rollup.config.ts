@@ -16,7 +16,10 @@ export default {
   ],
   sourcemap: true,
   // Indicate here external modules you don't wanna include in your bundle (i.e.: 'lodash')
-  external: [],
+  external: [
+	'url',
+	'lodash',
+  ],
   watch: {
     include: 'src/**',
   },
