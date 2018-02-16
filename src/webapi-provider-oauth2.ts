@@ -1,4 +1,4 @@
-import { URL } from 'url';
+import { parse as parseUrl } from 'url';
 
 import * as _ from 'lodash';
 
@@ -27,6 +27,12 @@ export declare enum QueryNum {
 	Many,
 }
 
+/**
+ * Generate an event provider object to authenticate through OAuth2 before doing queries.
+ *
+ * @param config Configuration object related to the OAuth2 authentication.
+ * @returns An event provider object. Each keys is an event handler function.
+ */
 export const OAuth2QueryTransformer = (config: IConfig) => {
 	let authInfos: AuthInfos | null = null;
 
@@ -38,7 +44,7 @@ export const OAuth2QueryTransformer = (config: IConfig) => {
 			};
 			const expiresIn = _.get(authInfos, 'response.expires_in');
 
-			//mais si personne ne se sert du serveur il n'est pas necessaire de se re-auth
+			// mais si personne ne se sert du serveur il n'est pas necessaire de se re-auth
 			if (_.isNumber(expiresIn)) {
 				authInfos.expirationDate = new Date();
 				authInfos.expirationDate.setSeconds(
@@ -49,6 +55,7 @@ export const OAuth2QueryTransformer = (config: IConfig) => {
 		},
 
 		// TODO: Replace `this` with WebAPIAdapter
+		// TODO: Set type of this method
 		async initialize(this: any): Promise<void> {
 			const params = {
 				grant_type: config.grantType,
@@ -56,13 +63,14 @@ export const OAuth2QueryTransformer = (config: IConfig) => {
 				client_secret: config.clientSecret,
 			};
 
-			const url = new URL(this.baseEndPoint);
+			const url = parseUrl(this.baseEndPoint);
 			url.pathname = config.endPoint;
 
 			return this.emit('authenticate', url, params);
 		},
 
-		// Replace `select`, `update`, `options` & `apiDesc` with Diaspora types
+		// TODO: Replace `select`, `update`, `options` & `apiDesc` with Diaspora types
+		// TODO: Set type of this method
 		beforeQuery(
 			queryType: QueryType,
 			queryNum: QueryNum,
